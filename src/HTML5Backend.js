@@ -428,8 +428,17 @@ export default class HTML5Backend {
     if (!this.monitor.isDragging()) {
       // This is probably a native item type we don't understand.
       // Prevent default "drop and blow away the whole document" action.
-      e.preventDefault();
-      e.dataTransfer.dropEffect = 'none';
+      try {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'none';
+      } catch (err) {
+        // TODO: try to see if e.dataTransfer.dropEffect is accessible
+        // There was an airpedal crash that preventDefault might not be
+        // accessible because the drag event stopped before this function
+        // gets triggered. In this case, dataTransfer shouldn't be
+        // accessible. So it should still crash here.
+        e.dataTransfer.dropEffect = 'none';
+      }
       return;
     }
 
